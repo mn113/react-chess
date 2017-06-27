@@ -40,3 +40,7 @@
 #board p.bishop.black { background-position: -256px 0; }
 #board p.knight.black { background-position: -128px 0; }
 #board p.pawn.black   { background-position: 0 0; } /* not used */
+
+div {
+	text-align: center;
+}

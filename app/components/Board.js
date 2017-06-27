@@ -4,9 +4,8 @@ var Piece = require('./Piece');
 // prop-types?
 
 class Board extends React.Component {
-	constructor(rules = 'qq') {
+	constructor() {
 		super();
-		this.rules = rules;
 		this.hash = [
 			[ 1,2,3,4 ],	// values will be overwritten with Pieces
 			[ 5,6,7,8 ],	// Squares need to stay in sync with this state
