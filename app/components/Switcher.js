@@ -1,6 +1,7 @@
 var React = require('react');
+var PropTypes = require('prop-types');
 var Headings = require('./Headings');
-// prop-types?
+
 
 class Switcher extends React.Component {
 	constructor(props) {
@@ -36,5 +37,11 @@ class Switcher extends React.Component {
 		);
 	}
 }
+
+Switcher.propTypes = {
+	mode: PropTypes.string,
+	title: PropTypes.string,
+	subtitle: PropTypes.string
+};
 
 module.exports = Switcher;

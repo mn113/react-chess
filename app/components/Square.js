@@ -1,7 +1,7 @@
 var React = require('react');
+var PropTypes = require('prop-types');
 var Piece = require('./Piece');
 
-// prop-types?
 
 // The Square should not really have state or any methods
 // Squares are fixed, stateless
@@ -22,5 +22,10 @@ class Square extends React.Component {
 		);
 	}
 }
+
+Square.propTypes = {
+	occupier: PropTypes.string,
+	coords: PropTypes.object.isRequired,
+};
 
 module.exports = Square;

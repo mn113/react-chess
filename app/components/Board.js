@@ -1,10 +1,11 @@
 var React = require('react');
 var Square = require('./Square');
 var Piece = require('./Piece');
+var PropTypes = require('prop-types');
 var _ = require('lodash');
 //var immutable = require('immutability-helper');
-import update from 'immutability-helper';
-// prop-types?
+import update from 'immutability-helper';	// ES6 style = bad?
+
 
 class Board extends React.Component {
 	constructor(props) {
@@ -141,5 +142,9 @@ class Board extends React.Component {
 		);
 	}
 }
+
+Board.propTypes = {
+	mode: PropTypes.string
+};
 
 export default Board;

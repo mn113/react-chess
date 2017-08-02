@@ -1,7 +1,7 @@
 var React = require('react');
 var Switcher = require('./Switcher');
 var Board = require('./Board').default;
-// prop-types?
+
 
 class App extends React.Component {
 	constructor(props) {

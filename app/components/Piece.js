@@ -1,7 +1,8 @@
 var React = require('react');
-// prop-types?
+var PropTypes = require('prop-types');
 
-// A Piece can have props: its type,
+
+// A Piece can have props: its type, its colour, its current coords.
 // It won't have state though
 class Piece extends React.Component {
 	constructor(props) {
@@ -92,5 +93,10 @@ class Piece extends React.Component {
 		);
 	}
 }
+
+Piece.propTypes = {
+	occupier: PropTypes.string,
+	coords: PropTypes.object.isRequired,
+};
 
 module.exports = Piece;
