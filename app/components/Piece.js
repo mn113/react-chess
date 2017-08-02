@@ -1,7 +1,7 @@
 var React = require('react');
 // prop-types?
 
-// A Piece can have props
+// A Piece can have props: its type, 
 // It won't have state though
 class Piece extends React.Component {
 	constructor(props) {

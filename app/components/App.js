@@ -7,18 +7,18 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			mode: 'queens',
+			mode: this.props.mode,
 			title: "",
 			subtitle: ""
 		};
 	}
 
 	componentDidMount() {
-		this.changeParentMode('queens');
+		this.changeParentMode(this.state.mode);
 	}
 
 	changeParentMode(mode) {	// will be called by the Switcher
-		console.log("App.changeMode sees this:", this);
+		console.log("App.changeMode sees this:", this, "and mode", mode);
 		if (mode === 'hippo') {
 			this.setState({
 				mode: mode,
@@ -26,7 +26,7 @@ class App extends React.Component {
 				subtitle: "A solitaire chess variation invented by Andy Lewicki in 2003"
 			});
 		}
-		else {
+		else if (mode === 'queens') {
 			this.setState({
 				mode: mode,
 				title: "Queen's Quadrille",

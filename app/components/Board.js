@@ -10,18 +10,18 @@ class Board extends React.Component {
 	constructor(props) {
 		super(props);
 		// Build out board:
-		var squares = [[],[],[],[]];
+		var emptysquares = [];
 		for (var x = 0; x < 4; x++) {
 			for (var y = 0; y < 4; y++) {
-				squares[x][y] = {
+				emptysquares.push({
 					x: x,
 					y: y,
 					occupier: null
-				};
+				});
 			}
 		}
 		this.state = {
-			squares: squares
+			squares: emptysquares
 		};
 	}
 
@@ -30,7 +30,8 @@ class Board extends React.Component {
 	}
 
 	randomFill() {
-		var squares = [[],[],[],[]];
+		console.log("Board.randomFill()");
+		var newSquares = [];
 		const allPieces = [
 			{type: 'king', 'colour': 'black'},
 			{type: 'king', 'colour': 'white'},
@@ -61,11 +62,20 @@ class Board extends React.Component {
 
 				// Exclude black queen from being placed:
 				if (randomPiece.type === 'queen' && randomPiece.colour === 'black') pieceID = null;
+				console.log(pieceID);
 
-				// Store in state array:
-				update(this.state.squares[x][y].occupier, {$set: pieceID});
+				// Store in new state array: //BUG
+				newSquares.push({
+					x: x,
+					y: y,
+					occupier: pieceID
+				});
 			}
 		}
+		console.log("newSquares:", newSquares);
+		this.setState({squares: newSquares});
+		//newArray = update(initialArray, {$push: [4]})
+		console.log(this.state);	// only nulls!
 	}
 
 	findEmpty() {
@@ -113,12 +123,13 @@ class Board extends React.Component {
 	//hippoWin() {}
 
 	render() {
-		console.log("Board.render() running");
+		console.log("Board.render() running with state", this.state);
+		console.log(this.state.squares.map(sq => { return [sq.x, sq.y] }));
 		return (
 			<div id="board">
-				{this.state.squares.map(sq => {
+				{this.state.squares.map(sq => (
 					<Square x={sq.x} y={sq.y} occupier={sq.occupier} key={'x'+sq.x+'y'+sq.y} />
-				})}
+				))}
 			</div>
 		);
 	}
