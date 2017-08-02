@@ -1,26 +1,22 @@
 var React = require('react');
 // prop-types?
 
+// The Square should not really have state or any methods
+// Squares are fixed, stateless
 class Square extends React.Component {
-	constructor(x, y, occupier = null) {
-		super();
-		this.x = x;
-		this.y = y;
-		this.occupier = occupier;
-	}
-
-	fill(piece) {
-		this.occupier = piece;
-	}
-
-	empty() {
-		this.occupier = null;
-	}
-
 	render() {
+		var piece = this.props.occupier;
+		console.log("Square.render contains piece:", piece);
 		return (
 			<div id={'x'+this.props.x+'y'+this.props.y}>
-				{this.props.occupier}
+				{piece ?
+					<Piece
+						type={piece.type}
+						colour={piece.colour}
+						id={piece.id}
+						movePiece = {null} />	// TODO
+					: 'e'
+				}
 			</div>
 		);
 	}

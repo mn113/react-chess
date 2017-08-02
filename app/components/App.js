@@ -1,20 +1,20 @@
 var React = require('react');
 var Switcher = require('./Switcher');
-var Board = require('./Board');
+var Board = require('./Board').default;
 // prop-types?
 
 class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			mode: 'queen',
+			mode: 'queens',
 			title: "",
 			subtitle: ""
 		};
 	}
 
 	componentDidMount() {
-		this.changeParentMode('queen');
+		this.changeParentMode('queens');
 	}
 
 	changeParentMode(mode) {	// will be called by the Switcher
@@ -46,7 +46,8 @@ class App extends React.Component {
 					changeParentMode={changeParentMode}
 					title={this.state.title}
 					subtitle={this.state.subtitle} />
-				<Board />
+
+				<Board mode={this.state.mode} />
 			</div>
 		);
 	}

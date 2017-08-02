@@ -1,16 +1,15 @@
 var React = require('react');
 // prop-types?
 
+// A Piece can have props
+// It won't have state though
 class Piece extends React.Component {
-	constructor(type, colour = 'white') {
-		super();
-		this.type = type;
-		this.colour = colour;
-		this.parent = null;
-		if (type === 'king' || type === 'queen') this.validMoves = ['adjacent','diagonal'];
-		else if (type === 'rook') this.validMoves = ['adjacent'];
-		else if (type === 'bishop') this.validMoves = ['diagonal'];
-		else if (type === 'knight') this.validMoves = ['dogleg'];
+	constructor(props) {
+		super(props);
+		if (props.type === 'king' || props.type === 'queen') this.validMoves = ['adjacent','diagonal'];
+		else if (props.type === 'rook') this.validMoves = ['adjacent'];
+		else if (props.type === 'bishop') this.validMoves = ['diagonal'];
+		else if (props.type === 'knight') this.validMoves = ['dogleg'];
 	}
 
 	adjacentMove() {
@@ -71,23 +70,14 @@ class Piece extends React.Component {
 		return dests;	// will be array whether empty or not
 	}
 
-	highlightDests() {
-
-	}
-
-	makeMove(dest) {
-		if (dest.props.occupier === '') {
-			// Empty parent Square:
-			this.parent.empty();
-			// Fill dest Square:
-			dest.fill(this);
-		}
+	movePiece() {
+		this.props.movePiece(this.props.id);
 	}
 
 	render() {
 		return (
 			<p className={this.props.type+' '+this.props.colour}
-				onClick={this.makeMove}>
+				onClick={(me) => this.movePiece(me)}>
 			</p>
 		);
 	}

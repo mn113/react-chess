@@ -39,8 +39,10 @@
     "webpack-dev-server": "^2.4.5"
   },
   "dependencies": {
+    "immutability-helper": "^2.2.2",
+    "lodash": "^4.17.4",
+    "prop-types": "",
     "react": "^15.6.1",
-    "react-dom": "^15.6.1",
-    "prop-types": ""
+    "react-dom": "^15.6.1"
   }
 }

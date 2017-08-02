@@ -1,24 +1,36 @@
 var React = require('react');
 var Square = require('./Square');
 var Piece = require('./Piece');
+var _ = require('lodash');
+//var immutable = require('immutability-helper');
+import update from 'immutability-helper';
 // prop-types?
 
 class Board extends React.Component {
-	constructor() {
-		super();
-		this.hash = [
-			[ 1,2,3,4 ],	// values will be overwritten with Pieces
-			[ 5,6,7,8 ],	// Squares need to stay in sync with this state
-			[ 9,10,11,12 ],
-			[ 13,14,15,16 ]
-		];
-		this.squares = [];	// flat array of squares
-//		console.log(this.hash[2][0]);
+	constructor(props) {
+		super(props);
+		// Build out board:
+		var squares = [[],[],[],[]];
+		for (var x = 0; x < 4; x++) {
+			for (var y = 0; y < 4; y++) {
+				squares[x][y] = {
+					x: x,
+					y: y,
+					occupier: null
+				};
+			}
+		}
+		this.state = {
+			squares: squares
+		};
+	}
+
+	componentDidMount() {
 		this.randomFill();
-//		console.log(this.hash[2][0]);
 	}
 
 	randomFill() {
+		var squares = [[],[],[],[]];
 		const allPieces = [
 			{type: 'king', 'colour': 'black'},
 			{type: 'king', 'colour': 'white'},
@@ -45,27 +57,55 @@ class Board extends React.Component {
 					randomPiece = allPieces[randomIndex];
 				allPieces.splice(randomIndex, 1);
 
-				// Instantiate Piece & load into Board hash:
-				var piece = (
-					<Piece type={randomPiece.type} colour={randomPiece.colour} />
-				);
-				// Exclude black queen from being placed:
-				if (randomPiece.type === 'queen' && randomPiece.colour === 'black') piece = null;
+				var pieceID = randomPiece.colour+randomPiece.type+'-x'+x+'y'+y;
 
-				//this.hash[x][y] = (
-				this.squares.push(
-					<Square
-						x={x}
-						y={y}
-						occupier={piece}
-						key={'x'+x+'y'+y}
-						ref={instance => { this.child = instance; }}
-						>
-						{piece}
-					</Square>
-				);
+				// Exclude black queen from being placed:
+				if (randomPiece.type === 'queen' && randomPiece.colour === 'black') pieceID = null;
+
+				// Store in state array:
+				update(this.state.squares[x][y].occupier, {$set: pieceID});
 			}
 		}
+	}
+
+	findEmpty() {
+		return _.flatten(this.state.squares).filter(sq => sq.props.occupier === null)[0];
+	}
+
+	findParentSquare(pieceID) {
+		console.log("Finding", pieceID);
+		return _.flatten(this.state.squares).filter(sq => sq.props.occupier && (sq.props.occupier.props.id === pieceID))[0];
+	}
+
+	movePiece(pieceID) {
+		// Find which Square the Piece resides in:
+		var origin = this.findParentSquare(pieceID);
+		// Find empty Square:
+		var empty = this.findEmpty();
+		// Check move validity...
+		console.log(origin.props, empty.props);
+		this.swapPieces(origin, empty);
+	}
+
+	swapPieces(square1, square2) {
+		//var newBoard = _.clone(this.state.squares);
+		console.log("Swapping...");
+		//console.log([square1.props.x, square1.props.y], 'gets', square2.props.occupier);
+		//console.log([square2.props.x, square2.props.y], 'gets', square1.props.occupier);
+
+		var piece1 = square1.props.occupier;
+		var piece2 = square2.props.occupier;
+		update(this.state.squares[square1.props.x][square1.props.y].props.occupier, {$set: piece2});
+		update(this.state.squares[square2.props.x][square2.props.y].props.occupier, {$set: piece1});
+
+		//newBoard[square1.props.x][square1.props.y].props.occupier = 7;//square2.props.occupier;
+		//newBoard[square2.props.x][square2.props.y].props.occupier = 'c';//square1.props.occupier;
+		//console.log(newBoard[square1.props.x][square1.props.y]);	// NOT NULL
+
+		//this.setState({
+		//	squares: newBoard
+		//});
+		console.log("New board state set.");
 	}
 
 	//qqWin() {}
@@ -73,10 +113,15 @@ class Board extends React.Component {
 	//hippoWin() {}
 
 	render() {
+		console.log("Board.render() running");
 		return (
-			<div id="board">{this.squares}</div>
+			<div id="board">
+				{this.state.squares.map(sq => {
+					<Square x={sq.x} y={sq.y} occupier={sq.occupier} key={'x'+sq.x+'y'+sq.y} />
+				})}
+			</div>
 		);
 	}
 }
 
-module.exports = Board;
+export default Board;
