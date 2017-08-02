@@ -7,24 +7,16 @@ var Piece = require('./Piece');
 // Squares are fixed, stateless
 class Square extends React.Component {
 	render() {
-		var piece = null;
-		if (this.props.occupier) {
-			// Extract values from piecename string:
-			piece = {
-				colour: this.props.occupier.slice(0,5),
-				type: this.props.occupier.slice(5, this.props.occupier.indexOf('-'))
-			};
-		}
-		console.log("Square.render contains piece:", piece);
+		var id = 'x'+this.props.coords.x+'y'+this.props.coords.y;
 		return (
-			<div id={'x'+this.props.x+'y'+this.props.y}>
-				{piece ?
+			<div id={id}>
+				{this.props.occupier ?
 					<Piece
-						type={piece.type}
-						colour={piece.colour}
-						id={piece.id}
-						movePiece = {null} />	// TODO
-					: ''
+						coords={this.props.coords}
+						occupier={this.props.occupier}
+						movePiece={this.props.movePiece}
+					/>
+					: ''	// empty square possibility
 				}
 			</div>
 		);

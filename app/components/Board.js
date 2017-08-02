@@ -14,8 +14,7 @@ class Board extends React.Component {
 		for (var x = 0; x < 4; x++) {
 			for (var y = 0; y < 4; y++) {
 				emptysquares.push({
-					x: x,
-					y: y,
+					coords: {x: x, y: y},
 					occupier: null
 				});
 			}
@@ -58,69 +57,73 @@ class Board extends React.Component {
 					randomPiece = allPieces[randomIndex];
 				allPieces.splice(randomIndex, 1);
 
-				var pieceID = randomPiece.colour+randomPiece.type+'-x'+x+'y'+y;
+				var pieceID = randomPiece.colour+randomPiece.type;//+'-x'+x+'y'+y;
 
 				// Exclude black queen from being placed:
 				if (randomPiece.type === 'queen' && randomPiece.colour === 'black') pieceID = null;
-				console.log(pieceID);
 
 				// Store in new state array: //BUG
 				newSquares.push({
-					x: x,
-					y: y,
+					coords: {x: x, y: y},
 					occupier: pieceID
 				});
 			}
 		}
-		console.log("newSquares:", newSquares);
 		this.setState({squares: newSquares});
-		//newArray = update(initialArray, {$push: [4]})
-		console.log(this.state);	// only nulls!
 	}
 
 	findEmpty() {
-		return _.flatten(this.state.squares).filter(sq => sq.props.occupier === null)[0];
+		return this.state.squares.filter(sq => sq.occupier === null)[0];
 	}
 
-	findParentSquare(pieceID) {
-		console.log("Finding", pieceID);
-		return _.flatten(this.state.squares).filter(sq => sq.props.occupier && (sq.props.occupier.props.id === pieceID))[0];
-	}
-
-	movePiece(pieceID) {
+	movePiece(pieceID, fromCoords) {	// 'blackrook', '{x:2,y:3}'
 		// Find which Square the Piece resides in:
-		var origin = this.findParentSquare(pieceID);
+		var origin = this.state.squares.filter(sq => {
+			return (sq.coords === fromCoords);
+		})[0];
+
 		// Find empty Square:
 		var empty = this.findEmpty();
+
 		// Check move validity...
-		console.log(origin.props, empty.props);
+		//
+		//
+		console.log("Move from:", origin);
+		console.log("Move to:", empty);
 		this.swapPieces(origin, empty);
 	}
 
 	swapPieces(square1, square2) {
-		//var newBoard = _.clone(this.state.squares);
-		console.log("Swapping...");
-		//console.log([square1.props.x, square1.props.y], 'gets', square2.props.occupier);
-		//console.log([square2.props.x, square2.props.y], 'gets', square1.props.occupier);
+		// Deep clone our board state:
+		var newBoard = _.clone(this.state.squares);
+		var temp = square1.occupier;
+		console.log(square1.coords, 'gets', square2.occupier);	// ok
+		console.log(square2.coords, 'gets', square1.occupier);	// ok
 
-		var piece1 = square1.props.occupier;
-		var piece2 = square2.props.occupier;
-		update(this.state.squares[square1.props.x][square1.props.y].props.occupier, {$set: piece2});
-		update(this.state.squares[square2.props.x][square2.props.y].props.occupier, {$set: piece1});
+		// Swap using array indices:
+		var i = newBoard.indexOf(square1),
+			j = newBoard.indexOf(square2);
+		console.log("Indices",i,j);
+		newBoard[i].occupier = null;	//null
+		newBoard[j].occupier = temp;	//null
 
-		//newBoard[square1.props.x][square1.props.y].props.occupier = 7;//square2.props.occupier;
-		//newBoard[square2.props.x][square2.props.y].props.occupier = 'c';//square1.props.occupier;
-		//console.log(newBoard[square1.props.x][square1.props.y]);	// NOT NULL
-
-		//this.setState({
-		//	squares: newBoard
-		//});
+		this.setState({squares: newBoard});
 		console.log("New board state set.");
 	}
 
-	//qqWin() {}
+	qqWin() {
+		// blackqueen must visit all 4 corners
+	}
 
-	//hippoWin() {}
+	hippoWin() {
+		// Looking for first row all knights:
+		return (
+			this.state.squares
+			.slice(0,4)
+			.filter(sq => { return sq.occupier.slice(5) === 'knight'; })
+			.length === 4
+		);
+	}
 
 	render() {
 		console.log("Board.render() running with state", this.state);
@@ -128,7 +131,11 @@ class Board extends React.Component {
 		return (
 			<div id="board">
 				{this.state.squares.map(sq => (
-					<Square x={sq.x} y={sq.y} occupier={sq.occupier} key={'x'+sq.x+'y'+sq.y} />
+					<Square
+						coords={sq.coords}
+						occupier={sq.occupier}
+						key={'x'+sq.coords.x+'y'+sq.coords.y}
+						movePiece={this.movePiece.bind(this)} />
 				))}
 			</div>
 		);

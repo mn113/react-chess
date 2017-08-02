@@ -41,6 +41,12 @@
 #board p.knight.black { background-position: -128px 0; }
 #board p.pawn.black   { background-position: 0 0; } /* not used */
 
+#board p.king:hover { background-position: -640px -1024px; }
+#board p.queen:hover  { background-position: -512px -1024px; }
+#board p.rook:hover   { background-position: -384px -1024px; }
+#board p.bishop:hover { background-position: -256px -1024px; }
+#board p.knight:hover { background-position: -128px -1024px; }
+
 div {
 	text-align: center;
 }

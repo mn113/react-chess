@@ -1,15 +1,23 @@
 var React = require('react');
 // prop-types?
 
-// A Piece can have props: its type, 
+// A Piece can have props: its type,
 // It won't have state though
 class Piece extends React.Component {
 	constructor(props) {
 		super(props);
-		if (props.type === 'king' || props.type === 'queen') this.validMoves = ['adjacent','diagonal'];
-		else if (props.type === 'rook') this.validMoves = ['adjacent'];
-		else if (props.type === 'bishop') this.validMoves = ['diagonal'];
-		else if (props.type === 'knight') this.validMoves = ['dogleg'];
+
+		if (this.props.occupier) {
+			// Extract values from piecename string:
+			this.colour = this.props.occupier.slice(0,5);
+			this.type = this.props.occupier.slice(5);
+		}
+
+		// Determine valid moves:
+		if (this.type === 'king' || this.type === 'queen') this.validMoves = ['adjacent','diagonal'];
+		else if (this.type === 'rook') this.validMoves = ['adjacent'];
+		else if (this.type === 'bishop') this.validMoves = ['diagonal'];
+		else if (this.type === 'knight') this.validMoves = ['dogleg'];
 	}
 
 	adjacentMove() {
@@ -70,14 +78,16 @@ class Piece extends React.Component {
 		return dests;	// will be array whether empty or not
 	}
 
-	movePiece() {
-		this.props.movePiece(this.props.id);
+	componentDidMount() {
+		// Animate the piece from old {x,y} coords to current {x,y}
+
 	}
 
 	render() {
+		//console.log("Piece.render() has this:", this);
 		return (
-			<p className={this.props.type+' '+this.props.colour}
-				onClick={(me) => this.movePiece(me)}>
+			<p className={this.type+' '+this.colour}
+				onClick={() => this.props.movePiece(this.props.occupier, this.props.coords)}>
 			</p>
 		);
 	}
