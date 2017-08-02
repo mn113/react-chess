@@ -14,9 +14,10 @@ class Square extends React.Component {
 					<Piece
 						coords={this.props.coords}
 						occupier={this.props.occupier}
+						empty={this.props.empty}
 						movePiece={this.props.movePiece}
 					/>
-					: ''	// empty square possibility
+					: '0'	// empty square possibility
 				}
 			</div>
 		);

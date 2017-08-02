@@ -21,7 +21,11 @@ class Board extends React.Component {
 			}
 		}
 		this.state = {
-			squares: emptysquares
+			squares: emptysquares,
+			empty: {
+				coords: {x:0 ,y:0}
+			},
+			moveCount: 0
 		};
 	}
 
@@ -70,11 +74,15 @@ class Board extends React.Component {
 				});
 			}
 		}
-		this.setState({squares: newSquares});
+		this.setState({squares: newSquares}, this.findEmptySquare);
 	}
 
-	findEmpty() {
-		return this.state.squares.filter(sq => sq.occupier === null)[0];
+	findEmptySquare() {
+		var empty = this.state.squares.filter(sq => sq.occupier === null)[0];
+		this.setState({empty: empty}, () => {
+			console.log("Empty @", empty.coords);
+		});
+		return empty;
 	}
 
 	movePiece(pieceID, fromCoords) {	// 'blackrook', '{x:2,y:3}'
@@ -84,7 +92,7 @@ class Board extends React.Component {
 		})[0];
 
 		// Find empty Square:
-		var empty = this.findEmpty();
+		var empty = this.state.empty;
 
 		// Check move validity...
 		//
@@ -108,15 +116,16 @@ class Board extends React.Component {
 		newBoard[i].occupier = null;	//null
 		newBoard[j].occupier = temp;	//null
 
-		this.setState({squares: newBoard});
+		this.setState({squares: newBoard}, this.findEmptySquare);
 		console.log("New board state set.");
+		this.props.incrementMoveCount();
 	}
 
-	qqWin() {
+	testQueensWin() {
 		// blackqueen must visit all 4 corners
 	}
 
-	hippoWin() {
+	testHippoWin() {
 		// Looking for first row all knights:
 		return (
 			this.state.squares
@@ -136,6 +145,7 @@ class Board extends React.Component {
 						coords={sq.coords}
 						occupier={sq.occupier}
 						key={'x'+sq.coords.x+'y'+sq.coords.y}
+						empty={this.state.empty}
 						movePiece={this.movePiece.bind(this)} />
 				))}
 			</div>

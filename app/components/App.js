@@ -9,7 +9,8 @@ class App extends React.Component {
 		this.state = {
 			mode: this.props.mode,
 			title: "",
-			subtitle: ""
+			subtitle: "",
+			moveCount: 0
 		};
 	}
 
@@ -35,6 +36,10 @@ class App extends React.Component {
 		}
 	}
 
+	incrementMoveCount() {
+		this.setState({moveCount: this.state.moveCount + 1});
+	}
+
 	render() {
 		console.log("App.render sees props:", this.props);
 		// Set correct context for handler function:
@@ -46,8 +51,11 @@ class App extends React.Component {
 					changeParentMode={changeParentMode}
 					title={this.state.title}
 					subtitle={this.state.subtitle} />
-
-				<Board mode={this.state.mode} />
+				<p>Moves: <span>{this.state.moveCount}</span></p>
+				<Board
+					mode={this.state.mode}
+					incrementMoveCount={this.incrementMoveCount.bind(this)}
+				/>
 			</div>
 		);
 	}
