@@ -10,9 +10,7 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			mode: this.props.mode,
-			title: "",
-			subtitle: "",
+			mode: 'hippo',
 			boardActive: true,
 			reloadBoard: false,
 			moveCount: 0,
@@ -98,8 +96,6 @@ class App extends React.Component {
 			<div>
 				<Switcher
 					mode={this.state.mode}
-					title={this.state.title}
-					subtitle={this.state.subtitle}
 					// parent methods for children to call:
 					changeMode={this.changeMode.bind(this)}
 				/>

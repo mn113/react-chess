@@ -99,8 +99,8 @@ class Board extends React.Component {
 	hippoFill() {
 		// We want all knights in the bottom row and randomness elsewhere:
 		var newSquares = [];
-		var noKnights = _.clone(allPieces).filter(p => p.type !== 'knight');
-		//console.log(noKnights.length);
+		var noKnights = _.cloneDeep(allPieces).filter(p => p.type !== 'knight');
+		console.log(noKnights.length);
 
 		// Fill randomly:
 		for (var y = 0; y < 3; y++) {
@@ -167,7 +167,7 @@ class Board extends React.Component {
 
 	swapPieces(square1, square2) {
 		// Deep clone our board state:
-		var newBoard = _.clone(this.state.squares);
+		var newBoard = _.cloneDeep(this.state.squares);
 		var temp = square1.occupier;
 		console.log(square1.coords, 'gets', square2.occupier);	// ok
 		console.log(square2.coords, 'gets', square1.occupier);	// ok
