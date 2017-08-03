@@ -1,8 +1,8 @@
 var React = require('react');
-var Switcher = require('./Switcher');
-var Stats = require('./Stats');
-var Buttons = require('./Buttons');
-var Board = require('./Board').default;
+var Switcher = require('./UI/Switcher');
+var Stats = require('./UI/Stats');
+var Buttons = require('./UI/Buttons');
+var Board = require('./Game/Board').default;
 var update = require('immutability-helper');
 
 
@@ -14,6 +14,7 @@ class App extends React.Component {
 			title: "",
 			subtitle: "",
 			boardActive: true,
+			reloadBoard: false,
 			moveCount: 0,
 			gameStreak: []
 		};
@@ -55,6 +56,26 @@ class App extends React.Component {
 		});
 	}
 
+	restart() {
+		if (this.state.boardActive) {
+			// Dirty restart
+			this.setState({
+				reloadBoard: true,
+				boardActive: true,
+				gameStreak: update(this.state.gameStreak, {$push: ['Loss']})
+			});
+		}
+		else {
+			// New board from won/lost position
+			this.setState({
+				reloadBoard: true,
+				boardActive: true
+			});
+		}
+		// Turned this prop on and off to cause one-off reload of Board:
+		this.setState({reloadBoard: false});
+	}
+
 	render() {
 		console.log("App.render sees props:", this.props);
 		// Set correct context for handler function:
@@ -83,6 +104,7 @@ class App extends React.Component {
 				<Board
 					mode={this.state.mode}
 					boardClasses={activeClass+' '+outcomeClass}
+					shouldReload={this.state.reloadBoard}
 					// parent methods for children to call:
 					endGame={this.endGame.bind(this)}
 					incrementMoveCount={this.incrementMoveCount.bind(this)}

@@ -1,6 +1,5 @@
 var React = require('react');
-var Square = require('./Square');
-var Piece = require('./Piece');
+var Square = require('./Game/Square');
 var PropTypes = require('prop-types');
 var _ = require('lodash');
 var update = require('immutability-helper');
@@ -31,6 +30,13 @@ class Board extends React.Component {
 
 	componentDidMount() {
 		this.randomFill();
+	}
+
+	componentWillReceiveProps(nextProps) {
+		if (!this.props.shouldReload && nextProps.shouldReload) {
+			// Begin new game:
+			this.randomFill();
+		}
 	}
 
 	randomFill() {

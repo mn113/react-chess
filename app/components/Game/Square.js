@@ -1,6 +1,7 @@
 var React = require('react');
+var Piece = require('./Game/Piece');
 var PropTypes = require('prop-types');
-var Piece = require('./Piece');
+var update = require('immutability-helper');
 
 
 // The Square should not really have state or any methods

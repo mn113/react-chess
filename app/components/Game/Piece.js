@@ -1,5 +1,6 @@
 var React = require('react');
 var PropTypes = require('prop-types');
+var update = require('immutability-helper');
 
 
 // A Piece can have props: its type, its colour, its current coords.
