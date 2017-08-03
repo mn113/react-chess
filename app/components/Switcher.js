@@ -11,11 +11,10 @@ class Switcher extends React.Component {
 	changeChildMode() {
 		console.log("Switcher.changeChildMode sees this:", this);
 		// Call App's method:
-		this.props.changeParentMode(this.refs.select.value);
+		this.props.changeMode(this.refs.select.value);
 	}
 
 	render() {
-		console.log("Switcher.render sees props:", this.props);
 		var gameTypes = [
 			{ mode: 'queen', title: "Queen's Quadrille" },
 			{ mode: 'hippo', title: "Hippodrome" }

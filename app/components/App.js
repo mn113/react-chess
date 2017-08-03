@@ -1,6 +1,9 @@
 var React = require('react');
 var Switcher = require('./Switcher');
+var Stats = require('./Stats');
+var Buttons = require('./Buttons');
 var Board = require('./Board').default;
+var update = require('immutability-helper');
 
 
 class App extends React.Component {
@@ -10,15 +13,17 @@ class App extends React.Component {
 			mode: this.props.mode,
 			title: "",
 			subtitle: "",
-			moveCount: 0
+			boardActive: true,
+			moveCount: 0,
+			gameStreak: []
 		};
 	}
 
 	componentDidMount() {
-		this.changeParentMode(this.state.mode);
+		this.changeMode(this.state.mode);
 	}
 
-	changeParentMode(mode) {	// will be called by the Switcher
+	changeMode(mode) {	// will be called by the Switcher
 		console.log("App.changeMode sees this:", this, "and mode", mode);
 		if (mode === 'hippo') {
 			this.setState({
@@ -36,24 +41,50 @@ class App extends React.Component {
 		}
 	}
 
-	incrementMoveCount() {
+	incrementMoveCount() {	// will be called by Board
 		this.setState({moveCount: this.state.moveCount + 1});
+	}
+
+	endGame(win = true) {	// will be called by Board
+		var outcome = win ? 'Win' : 'Loss';
+		console.log("Game ended in a", outcome);
+
+		this.setState({
+			boardActive: false,
+			gameStreak: update(this.state.gameStreak, {$push: [outcome]})
+		});
 	}
 
 	render() {
 		console.log("App.render sees props:", this.props);
 		// Set correct context for handler function:
-		var changeParentMode = this.changeParentMode.bind(this);
+		//var changeParentMode = this.changeParentMode.bind(this);
+		var activeClass = this.state.boardActive ? '' : 'locked';
+		var outcomeClass = this.state.gameStreak[-1] === 'W' ? 'winner' : 'loser';
+		if (this.state.boardActive) outcomeClass = '';
+
 		return (
 			<div>
 				<Switcher
 					mode={this.state.mode}
-					changeParentMode={changeParentMode}
 					title={this.state.title}
-					subtitle={this.state.subtitle} />
-				<p>Moves: <span>{this.state.moveCount}</span></p>
+					subtitle={this.state.subtitle}
+					// parent methods for children to call:
+					changeParentMode={this.changeMode.bind(this)}
+				/>
+				<Stats
+					moveCount={this.state.moveCount}
+					gameStreak={this.state.gameStreak}
+				/>
+				<Buttons
+				 	activeBoard={this.state.boardActive}
+					restart={this.restart.bind(this)}
+				/>
 				<Board
 					mode={this.state.mode}
+					boardClasses={activeClass+' '+outcomeClass}
+					// parent methods for children to call:
+					endGame={this.endGame.bind(this)}
 					incrementMoveCount={this.incrementMoveCount.bind(this)}
 				/>
 			</div>

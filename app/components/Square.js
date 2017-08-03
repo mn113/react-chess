@@ -15,6 +15,7 @@ class Square extends React.Component {
 						coords={this.props.coords}
 						occupier={this.props.occupier}
 						empty={this.props.empty}
+						mode={this.props.mode}
 						movePiece={this.props.movePiece}
 					/>
 					: '0'	// empty square possibility

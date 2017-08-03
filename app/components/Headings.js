@@ -3,7 +3,6 @@ var React = require('react');
 
 class Headings extends React.Component {
 	render() {
-		console.log("Headings.render sees props:", this.props);
 		return (
 			<div>
 				<h2>{this.props.title}</h2>

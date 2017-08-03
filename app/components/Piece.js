@@ -22,19 +22,20 @@ class Piece extends React.Component {
 	}
 
 	canMove() {
-		// Check if this piece can make a valid move to empty.
+		// Check if this piece has a valid move to empty square.
 		var rel = this.relationToEmptySquare();
-		console.log(this.props.coords, this.props.empty.coords, rel, this.type);
-		// DogLeg?
+
+		// DogLeg move?
 		if (this.type === 'knight' && (rel.dx === 2 && rel.dy === 1 || rel.dx === 1 && rel.dy === 2)
 		)
 			return true;
-		// Diagonal?
+		// Diagonal move?
 		else if (['bishop','king','queen'].includes(this.type) && rel.dx === 1 && rel.dy === 1)
 			return true;
-		// Lateral?
+		// Lateral move?
 		else if (['rook','king','queen'].includes(this.type) && (rel.dx === 1 && rel.dy === 0 || rel.dx === 0 && rel.dy === 1))
 			return true;
+		// No valid moves.
 		else {
 			return false;
 		}
@@ -103,10 +104,11 @@ class Piece extends React.Component {
 	//}
 
 	render() {
-		//console.log("Piece.render() has this:", this);
+		var finalClass = (this.props.mode === 'hippo' && this.type === 'knight' && this.props.coords.y === 0) ? 'final' : '';
 		var validMoveClass = this.canMove() ? 'valid' : 'invalid';
+
 		return (
-			<p className={this.type+' '+this.colour+' '+validMoveClass}
+			<p className={this.type+' '+this.colour+' '+validMoveClass+' '+finalClass}
 				onClick={() => this.props.movePiece(this.props.occupier, this.props.coords)}>
 			</p>
 		);

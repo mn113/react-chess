@@ -3,8 +3,7 @@ var Square = require('./Square');
 var Piece = require('./Piece');
 var PropTypes = require('prop-types');
 var _ = require('lodash');
-//var immutable = require('immutability-helper');
-import update from 'immutability-helper';	// ES6 style = bad?
+var update = require('immutability-helper');
 
 
 class Board extends React.Component {
@@ -12,8 +11,8 @@ class Board extends React.Component {
 		super(props);
 		// Build out board:
 		var emptysquares = [];
-		for (var x = 0; x < 4; x++) {
-			for (var y = 0; y < 4; y++) {
+		for (var y = 0; y < 4; y++) {
+			for (var x = 0; x < 4; x++) {
 				emptysquares.push({
 					coords: {x: x, y: y},
 					occupier: null
@@ -25,7 +24,8 @@ class Board extends React.Component {
 			empty: {
 				coords: {x:0 ,y:0}
 			},
-			moveCount: 0
+			moveCount: 0,
+			queenHistory: []
 		};
 	}
 
@@ -55,8 +55,8 @@ class Board extends React.Component {
 			{type: 'knight', 'colour': 'white'}
 		];
 		// Fill randomly:
-		for (var x = 0; x < 4; x++) {
-			for (var y = 0; y < 4; y++) {
+		for (var y = 0; y < 4; y++) {
+			for (var x = 0; x < 4; x++) {
 				// Select Piece properties randomly from above array:
 				var randomIndex = Math.floor(allPieces.length * Math.random()),
 					randomPiece = allPieces[randomIndex];
@@ -94,9 +94,6 @@ class Board extends React.Component {
 		// Find empty Square:
 		var empty = this.state.empty;
 
-		// Check move validity...
-		//
-		//
 		console.log("Move from:", origin);
 		console.log("Move to:", empty);
 		this.swapPieces(origin, empty);
@@ -116,13 +113,36 @@ class Board extends React.Component {
 		newBoard[i].occupier = null;	//null
 		newBoard[j].occupier = temp;	//null
 
-		this.setState({squares: newBoard}, this.findEmptySquare);
+		// Start updating state:
+		if (temp === 'whitequeen') {
+			this.setState({queenHistory: update(this.state.queenHistory, {$push: [square2.coords]})});
+		}
+		this.setState({squares: newBoard}, () => {
+			this.findEmptySquare();
+			this.testWin();
+		});
 		console.log("New board state set.");
+
+		// Run incrementor on parent App:
 		this.props.incrementMoveCount();
 	}
 
+	testWin() {
+		if ((this.state.mode === 'queens' && this.testQueensWin()) ||
+		(this.state.mode === 'hippo' && this.testHippoWin())) {
+			// Win condition met. Call parent App:
+			this.props.endGame(true);
+		}
+	}
+
 	testQueensWin() {
-		// blackqueen must visit all 4 corners
+		// whitequeen must visit all 4 corners
+		return (
+			this.state.queenHistory.includes({x:0,y:0}) &&
+			this.state.queenHistory.includes({x:0,y:3}) &&
+			this.state.queenHistory.includes({x:3,y:0}) &&
+			this.state.queenHistory.includes({x:3,y:3})
+		);
 	}
 
 	testHippoWin() {
@@ -136,16 +156,16 @@ class Board extends React.Component {
 	}
 
 	render() {
-		console.log("Board.render() running with state", this.state);
-		console.log(this.state.squares.map(sq => { return [sq.x, sq.y] }));
 		return (
-			<div id="board">
+			<div id="board" className={this.props.boardClasses}>
 				{this.state.squares.map(sq => (
 					<Square
 						coords={sq.coords}
 						occupier={sq.occupier}
 						key={'x'+sq.coords.x+'y'+sq.coords.y}
 						empty={this.state.empty}
+						mode={this.props.mode}
+						// parent methods for children to call:
 						movePiece={this.movePiece.bind(this)} />
 				))}
 			</div>

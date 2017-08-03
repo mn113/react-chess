@@ -8,6 +8,16 @@
 	width: calc(512px + 6px);
 	margin: 4em auto;
 }
+#board.winner {
+	border-color: limegreen;
+}
+#board.loser {
+	border-color: indianred;
+}
+#board.locked {
+	pointer-events: none;
+	cursor: not-allowed;
+}
 
 #board > div {
 	background: peru;
@@ -41,11 +51,14 @@
 #board p.knight.black { background-position: -128px 0; }
 #board p.pawn.black   { background-position: 0 0; } /* not used */
 
-#board p.king.valid:hover { background-position: -640px -1024px; }
-#board p.queen.valid:hover  { background-position: -512px -1024px; }
-#board p.rook.valid:hover   { background-position: -384px -1024px; }
-#board p.bishop.valid:hover { background-position: -256px -1024px; }
-#board p.knight.valid:hover { background-position: -128px -1024px; }
+#board p.king.valid:hover   { background-position: -640px -1152px; } /* blue */
+#board p.queen.valid:hover  { background-position: -512px -1152px; }
+#board p.rook.valid:hover   { background-position: -384px -1152px; }
+#board p.bishop.valid:hover { background-position: -256px -1152px; }
+#board p.knight.valid:hover { background-position: -128px -1152px; }
+
+#board p.bishop.final { background-position: -256px -1024px; }	/* green */
+#board p.knight.final { background-position: -128px -1024px; }
 
 #board p.invalid:hover { cursor: not-allowed; }
 
