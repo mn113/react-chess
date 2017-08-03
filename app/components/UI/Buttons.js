@@ -3,13 +3,22 @@ var React = require('react');
 
 class Buttons extends React.Component {
 	render() {
-		var wording = this.props.activeBoard ? 'Give up' : 'New game';
+//		var wording = this.props.boardActive ? 'Give up' : 'New game';
 
-		return (
-			<div>
-				<button onClick={this.props.restart}>{wording}</button>
-			</div>
-		);
+		if (this.props.boardActive) {
+			return (
+				<div>
+					<button onClick={this.props.finishGame}>Give up</button>
+				</div>
+			);
+		}
+		else {
+			return (
+				<div>
+					<button onClick={this.props.newGame}>New game</button>
+				</div>
+			);
+		}
 	}
 }
 

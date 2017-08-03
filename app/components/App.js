@@ -16,7 +16,9 @@ class App extends React.Component {
 			boardActive: true,
 			reloadBoard: false,
 			moveCount: 0,
-			gameStreak: []
+			gameStreak: [],
+			winCount: 0,
+			lossCount: 0
 		};
 	}
 
@@ -40,48 +42,56 @@ class App extends React.Component {
 				subtitle: "A solitaire chess variation by Karen Robinson, 1998"
 			});
 		}
+		this.newGame();
 	}
+
+	/****************/
 
 	incrementMoveCount() {	// will be called by Board
 		this.setState({moveCount: this.state.moveCount + 1});
 	}
 
-	endGame(win = true) {	// will be called by Board
-		var outcome = win ? 'Win' : 'Loss';
-		console.log("Game ended in a", outcome);
+	/****************/
 
+	finishGame(win = false) {
+		var outcome = win ? 'Win' : 'Loss';
+		console.log("App.finishGame() called with a", outcome);
+
+		// Freeze board first:
 		this.setState({
 			boardActive: false,
+			didWinMsg: win,
 			gameStreak: update(this.state.gameStreak, {$push: [outcome]})
 		});
-	}
 
-	restart() {
-		if (this.state.boardActive) {
-			// Dirty restart
-			this.setState({
-				reloadBoard: true,
-				boardActive: true,
-				gameStreak: update(this.state.gameStreak, {$push: ['Loss']})
-			});
+		// Increment wins/losses:
+		// Wait for input if winner, reset board if quitter:
+		if (win) {
+			this.setState({winCount: this.state.winCount + 1});
+			// App.newGame is called by clicking 'New game' button
 		}
 		else {
-			// New board from won/lost position
-			this.setState({
-				reloadBoard: true,
-				boardActive: true
-			});
+			this.setState({lossCount: this.state.lossCount + 1});
+			this.newGame();
 		}
-		// Turned this prop on and off to cause one-off reload of Board:
-		this.setState({reloadBoard: false});
 	}
 
+	newGame() {
+		// Trigger a board reset:
+		this.setState({
+			boardActive: true,
+			didWinMsg: false,
+		});
+		this.board.componentDidMount();
+	}
+
+	/****************/
+
 	render() {
-		console.log("App.render sees props:", this.props);
+		//console.log("App.render sees props:", this.props);
 		// Set correct context for handler function:
-		//var changeParentMode = this.changeParentMode.bind(this);
 		var activeClass = this.state.boardActive ? '' : 'locked';
-		var outcomeClass = this.state.gameStreak[-1] === 'W' ? 'winner' : 'loser';
+		var outcomeClass = this.state.gameStreak[this.state.gameStreak.length-1] === 'Win' ? 'winner' : 'loser';
 		if (this.state.boardActive) outcomeClass = '';
 
 		return (
@@ -91,22 +101,30 @@ class App extends React.Component {
 					title={this.state.title}
 					subtitle={this.state.subtitle}
 					// parent methods for children to call:
-					changeParentMode={this.changeMode.bind(this)}
+					changeMode={this.changeMode.bind(this)}
 				/>
 				<Stats
 					moveCount={this.state.moveCount}
+					winCount={this.state.winCount}
+					lossCount={this.state.lossCount}
 					gameStreak={this.state.gameStreak}
+					didWinMsg={this.state.didWinMsg}
 				/>
 				<Buttons
-				 	activeBoard={this.state.boardActive}
-					restart={this.restart.bind(this)}
+				 	boardActive={this.state.boardActive}
+					// parent methods for children to call:
+					finishGame={this.finishGame.bind(this)}
+					newGame={this.newGame.bind(this)}
 				/>
 				<Board
 					mode={this.state.mode}
 					boardClasses={activeClass+' '+outcomeClass}
-					shouldReload={this.state.reloadBoard}
+					//shouldReload={this.state.reloadBoard}
+					// define a ref to child:
+					ref={(board) => { this.board = board; }}
 					// parent methods for children to call:
-					endGame={this.endGame.bind(this)}
+					finishGame={this.finishGame.bind(this)}
+					//turnOffReloadTrigger={this.turnOffReloadTrigger.bind(this)}
 					incrementMoveCount={this.incrementMoveCount.bind(this)}
 				/>
 			</div>

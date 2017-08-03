@@ -1,9 +1,27 @@
 var React = require('react');
-var Square = require('./Game/Square');
+var Square = require('./Square');
 var PropTypes = require('prop-types');
 var _ = require('lodash');
 var update = require('immutability-helper');
 
+const allPieces = [
+	{type: 'king', 'colour': 'black'},
+	{type: 'king', 'colour': 'white'},
+	{type: 'queen', 'colour': 'black'},
+	{type: 'queen', 'colour': 'white'},
+	{type: 'rook', 'colour': 'black'},
+	{type: 'rook', 'colour': 'black'},
+	{type: 'rook', 'colour': 'white'},
+	{type: 'rook', 'colour': 'white'},
+	{type: 'bishop', 'colour': 'black'},
+	{type: 'bishop', 'colour': 'black'},
+	{type: 'bishop', 'colour': 'white'},
+	{type: 'bishop', 'colour': 'white'},
+	{type: 'knight', 'colour': 'black'},
+	{type: 'knight', 'colour': 'black'},
+	{type: 'knight', 'colour': 'white'},
+	{type: 'knight', 'colour': 'white'}
+];
 
 class Board extends React.Component {
 	constructor(props) {
@@ -18,6 +36,7 @@ class Board extends React.Component {
 				});
 			}
 		}
+		// Initialise default state:
 		this.state = {
 			squares: emptysquares,
 			empty: {
@@ -29,37 +48,31 @@ class Board extends React.Component {
 	}
 
 	componentDidMount() {
-		this.randomFill();
+		// Fill a new board on every page load:
+		if (this.props.mode === 'queens') this.randomFill();
+		else if (this.props.mode === 'hippo') this.hippoFill();
 	}
 
+/*
 	componentWillReceiveProps(nextProps) {
+		// Fill a new board if parent passed shouldReload prop:
 		if (!this.props.shouldReload && nextProps.shouldReload) {
 			// Begin new game:
-			this.randomFill();
+			this.componentDidMount();
+			//if (this.props.mode === 'queens') this.randomFill();
+			//else if (this.props.mode === 'hippo') this.hippoFill();
+
+			// Tell App to stop sending the trigger boolean:
+			//this.props.turnOffReloadTrigger();
 		}
 	}
+*/
+
+	/******************/
 
 	randomFill() {
 		console.log("Board.randomFill()");
 		var newSquares = [];
-		const allPieces = [
-			{type: 'king', 'colour': 'black'},
-			{type: 'king', 'colour': 'white'},
-			{type: 'queen', 'colour': 'black'},
-			{type: 'queen', 'colour': 'white'},
-			{type: 'rook', 'colour': 'black'},
-			{type: 'rook', 'colour': 'black'},
-			{type: 'rook', 'colour': 'white'},
-			{type: 'rook', 'colour': 'white'},
-			{type: 'bishop', 'colour': 'black'},
-			{type: 'bishop', 'colour': 'black'},
-			{type: 'bishop', 'colour': 'white'},
-			{type: 'bishop', 'colour': 'white'},
-			{type: 'knight', 'colour': 'black'},
-			{type: 'knight', 'colour': 'black'},
-			{type: 'knight', 'colour': 'white'},
-			{type: 'knight', 'colour': 'white'}
-		];
 		// Fill randomly:
 		for (var y = 0; y < 4; y++) {
 			for (var x = 0; x < 4; x++) {
@@ -68,12 +81,12 @@ class Board extends React.Component {
 					randomPiece = allPieces[randomIndex];
 				allPieces.splice(randomIndex, 1);
 
-				var pieceID = randomPiece.colour+randomPiece.type;//+'-x'+x+'y'+y;
+				var pieceID = randomPiece.colour+randomPiece.type;
 
 				// Exclude black queen from being placed:
 				if (randomPiece.type === 'queen' && randomPiece.colour === 'black') pieceID = null;
 
-				// Store in new state array: //BUG
+				// Store in new state array:
 				newSquares.push({
 					coords: {x: x, y: y},
 					occupier: pieceID
@@ -82,6 +95,53 @@ class Board extends React.Component {
 		}
 		this.setState({squares: newSquares}, this.findEmptySquare);
 	}
+
+	hippoFill() {
+		// We want all knights in the bottom row and randomness elsewhere:
+		var newSquares = [];
+		var noKnights = _.clone(allPieces).filter(p => p.type !== 'knight');
+		//console.log(noKnights.length);
+
+		// Fill randomly:
+		for (var y = 0; y < 3; y++) {
+			for (var x = 0; x < 4; x++) {
+				// Select Piece properties randomly from above array:
+				var randomIndex = Math.floor(noKnights.length * Math.random()),
+					randomPiece = noKnights[randomIndex];
+				noKnights.splice(randomIndex, 1);
+
+				var pieceID = randomPiece.colour+randomPiece.type;
+
+				// Exclude black queen from being placed:
+				if (randomPiece.type === 'queen' && randomPiece.colour === 'black') pieceID = null;
+
+				// Store in new state array:
+				newSquares.push({
+					coords: {x: x, y: y},
+					occupier: pieceID
+				});
+			}
+		}
+		// Fill random knights on row 3:
+		y = 3;
+		var knights = ['blackknight','whiteknight','blackknight','whiteknight'];
+		for (x = 0; x < 4; x++) {
+			newSquares.push({
+				coords: {x: x, y: y},
+				occupier: knights.shift()
+			});
+		}
+		console.log(newSquares);
+
+		// Update Board state:
+		this.setState({squares: update(this.state.squares, {$set: newSquares})}, () => {
+			// Callback:
+			this.findEmptySquare();
+			this.forceUpdate();
+		});	// doesn't re-render or only renders one changed square
+	}
+
+	/******************/
 
 	findEmptySquare() {
 		var empty = this.state.squares.filter(sq => sq.occupier === null)[0];
@@ -124,20 +184,23 @@ class Board extends React.Component {
 			this.setState({queenHistory: update(this.state.queenHistory, {$push: [square2.coords]})});
 		}
 		this.setState({squares: newBoard}, () => {
+			console.log("New board state set.");
 			this.findEmptySquare();
 			this.testWin();
 		});
-		console.log("New board state set.");
 
 		// Run incrementor on parent App:
 		this.props.incrementMoveCount();
 	}
 
+	/******************/
+
 	testWin() {
-		if ((this.state.mode === 'queens' && this.testQueensWin()) ||
-		(this.state.mode === 'hippo' && this.testHippoWin())) {
+		console.log("Testing win in", this.props.mode, "mode");
+		if ((this.props.mode === 'queens' && this.testQueensWin()) ||
+		(this.props.mode === 'hippo' && this.testHippoWin())) {
 			// Win condition met. Call parent App:
-			this.props.endGame(true);
+			this.props.finishGame(true);
 		}
 	}
 
@@ -156,10 +219,12 @@ class Board extends React.Component {
 		return (
 			this.state.squares
 			.slice(0,4)
-			.filter(sq => { return sq.occupier.slice(5) === 'knight'; })
+			.filter(sq => { return sq.occupier && sq.occupier.slice(5) === 'knight'; })
 			.length === 4
 		);
 	}
+
+	/******************/
 
 	render() {
 		return (
@@ -180,7 +245,10 @@ class Board extends React.Component {
 }
 
 Board.propTypes = {
-	mode: PropTypes.string
+	mode: PropTypes.string,
+	boardClasses: PropTypes.string,
+	finishGame: PropTypes.func,
+	incrementMoveCount: PropTypes.func
 };
 
 export default Board;

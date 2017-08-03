@@ -1,5 +1,5 @@
 var React = require('react');
-var Piece = require('./Game/Piece');
+var Piece = require('./Piece');
 var PropTypes = require('prop-types');
 var update = require('immutability-helper');
 
@@ -9,12 +9,23 @@ var update = require('immutability-helper');
 class Square extends React.Component {
 	render() {
 		var id = 'x'+this.props.coords.x+'y'+this.props.coords.y;
+		var colour = '',
+			type = '';
+
+		if (this.props.occupier) {
+			// Extract values from piecename string:
+			colour = this.props.occupier.slice(0,5);
+			type = this.props.occupier.slice(5);
+		}
+
 		return (
 			<div id={id}>
 				{this.props.occupier ?
 					<Piece
 						coords={this.props.coords}
-						occupier={this.props.occupier}
+//						occupier={this.props.occupier}
+						colour={colour}
+						type={type}
 						empty={this.props.empty}
 						mode={this.props.mode}
 						movePiece={this.props.movePiece}
@@ -27,8 +38,11 @@ class Square extends React.Component {
 }
 
 Square.propTypes = {
-	occupier: PropTypes.string,
 	coords: PropTypes.object.isRequired,
+	occupier: PropTypes.string,
+	empty: PropTypes.object,
+	mode: PropTypes.string,
+	movePiece: PropTypes.func
 };
 
 module.exports = Square;

@@ -8,12 +8,6 @@ var update = require('immutability-helper');
 class Piece extends React.Component {
 	constructor(props) {
 		super(props);
-
-		if (this.props.occupier) {
-			// Extract values from piecename string:
-			this.colour = this.props.occupier.slice(0,5);
-			this.type = this.props.occupier.slice(5);
-		}
 	}
 
 	relationToEmptySquare() {
@@ -27,14 +21,14 @@ class Piece extends React.Component {
 		var rel = this.relationToEmptySquare();
 
 		// DogLeg move?
-		if (this.type === 'knight' && (rel.dx === 2 && rel.dy === 1 || rel.dx === 1 && rel.dy === 2)
+		if (this.props.type === 'knight' && (rel.dx === 2 && rel.dy === 1 || rel.dx === 1 && rel.dy === 2)
 		)
 			return true;
 		// Diagonal move?
-		else if (['bishop','king','queen'].includes(this.type) && rel.dx === 1 && rel.dy === 1)
+		else if (['bishop','king','queen'].includes(this.props.type) && rel.dx === 1 && rel.dy === 1)
 			return true;
 		// Lateral move?
-		else if (['rook','king','queen'].includes(this.type) && (rel.dx === 1 && rel.dy === 0 || rel.dx === 0 && rel.dy === 1))
+		else if (['rook','king','queen'].includes(this.props.type) && (rel.dx === 1 && rel.dy === 0 || rel.dx === 0 && rel.dy === 1))
 			return true;
 		// No valid moves.
 		else {
@@ -105,20 +99,26 @@ class Piece extends React.Component {
 	//}
 
 	render() {
-		var finalClass = (this.props.mode === 'hippo' && this.type === 'knight' && this.props.coords.y === 0) ? 'final' : '';
+		// Style final-place pieces:
+		var finalClass = (this.props.mode === 'hippo' && this.props.type === 'knight' && this.props.coords.y === 0) ? 'final' : '';
 		var validMoveClass = this.canMove() ? 'valid' : 'invalid';
 
 		return (
-			<p className={this.type+' '+this.colour+' '+validMoveClass+' '+finalClass}
-				onClick={() => this.props.movePiece(this.props.occupier, this.props.coords)}>
+			<p className={this.props.type+' '+this.props.colour+' '+validMoveClass+' '+finalClass}
+				onClick={() => this.props.movePiece(this.props.colour+this.props.type, this.props.coords)}>
 			</p>
 		);
 	}
 }
 
 Piece.propTypes = {
-	occupier: PropTypes.string,
 	coords: PropTypes.object.isRequired,
+//	occupier: PropTypes.string,
+	colour: PropTypes.string,
+	type: PropTypes.string,
+	empty: PropTypes.object,
+	mode: PropTypes.string,
+	movePiece: PropTypes.func
 };
 
 module.exports = Piece;
