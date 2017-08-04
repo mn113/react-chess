@@ -1,7 +1,7 @@
 # React-Chess
 
-![chessboard1](./components/UI/hippowin.png)
-![chessboard2](./components/UI/queenswin.png)
+![chessboard1](https://github.com/mn113/react-chess/blob/master/app/components/UI/hippowin.png)
+![chessboard2](./app/components/UI/queenswin.png)
 
 ## What is it?
 
