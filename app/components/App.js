@@ -119,6 +119,7 @@ class App extends React.Component {
 					<section className="padding">&nbsp;</section>
 					<Board
 						mode={this.state.mode}
+						moveCount={this.state.moveCount}
 						boardClasses={activeClass+' '+outcomeClass}
 						//shouldReload={this.state.reloadBoard}
 						// define a ref to child:

@@ -50,9 +50,10 @@ section.rules {
 	border: 1.5em solid #999;
 	background: #666;
 	width: calc(512px + 6px);
+	height: calc(512px + 6px);
 }
 #board.winner {
-	border-color: limegreen;
+	border-color: lawngreen;
 }
 #board.loser {
 	border-color: indianred;

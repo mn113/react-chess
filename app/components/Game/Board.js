@@ -51,22 +51,18 @@ class Board extends React.Component {
 		// Fill a new board on every page load:
 		if (this.props.mode === 'queens') this.randomFill();
 		else if (this.props.mode === 'hippo') this.hippoFill();
-	}
 
-/*
-	componentWillReceiveProps(nextProps) {
-		// Fill a new board if parent passed shouldReload prop:
-		if (!this.props.shouldReload && nextProps.shouldReload) {
-			// Begin new game:
-			this.componentDidMount();
-			//if (this.props.mode === 'queens') this.randomFill();
-			//else if (this.props.mode === 'hippo') this.hippoFill();
-
-			// Tell App to stop sending the trigger boolean:
-			//this.props.turnOffReloadTrigger();
+		// Initialise white queen's history:
+		if (this.props.mode === 'queens') {
+			var wq = this.findPiece('whitequeen');
+			this.setState({
+				queenHistory: update(this.state.queenHistory, {
+					$push: ['x'+wq.coords.x+'y'+wq.coords.y]
+				})
+			});
+			console.log("White queen starts in", wq.coords);
 		}
 	}
-*/
 
 	/******************/
 
@@ -99,7 +95,7 @@ class Board extends React.Component {
 	hippoFill() {
 		// We want all knights in the bottom row and randomness elsewhere:
 		var newSquares = [];
-		var noKnights = _.cloneDeep(allPieces).filter(p => p.type !== 'knight');
+		var noKnights = _.clone(allPieces).filter(p => p.type !== 'knight');
 		console.log(noKnights.length);
 
 		// Fill randomly:
@@ -143,6 +139,10 @@ class Board extends React.Component {
 
 	/******************/
 
+	findPiece(pieceID) {
+		return this.state.squares.filter(sq => sq.occupier === pieceID)[0];
+	}
+
 	findEmptySquare() {
 		var empty = this.state.squares.filter(sq => sq.occupier === null)[0];
 		this.setState({empty: empty}, () => {
@@ -175,13 +175,17 @@ class Board extends React.Component {
 		// Swap using array indices:
 		var i = newBoard.indexOf(square1),
 			j = newBoard.indexOf(square2);
-		console.log("Indices",i,j);
+		console.log("Square indices to swap",i,j);
 		newBoard[i].occupier = null;	//null
 		newBoard[j].occupier = temp;	//null
 
 		// Start updating state:
 		if (temp === 'whitequeen') {
-			this.setState({queenHistory: update(this.state.queenHistory, {$push: [square2.coords]})});
+			this.setState({
+				queenHistory: update(this.state.queenHistory, {
+					$push: ['x'+square2.coords.x+'y'+square2.coords.y]
+				})
+			});
 		}
 		this.setState({squares: newBoard}, () => {
 			console.log("New board state set.");
@@ -207,10 +211,10 @@ class Board extends React.Component {
 	testQueensWin() {
 		// whitequeen must visit all 4 corners
 		return (
-			this.state.queenHistory.includes({x:0,y:0}) &&
-			this.state.queenHistory.includes({x:0,y:3}) &&
-			this.state.queenHistory.includes({x:3,y:0}) &&
-			this.state.queenHistory.includes({x:3,y:3})
+			this.state.queenHistory.includes('x0y0') &&
+			this.state.queenHistory.includes('x0y3') &&
+			this.state.queenHistory.includes('x3y0') &&
+			this.state.queenHistory.includes('x3y3')
 		);
 	}
 
@@ -236,6 +240,7 @@ class Board extends React.Component {
 						key={'x'+sq.coords.x+'y'+sq.coords.y}
 						empty={this.state.empty}
 						mode={this.props.mode}
+						moveCount={this.props.moveCount}
 						// parent methods for children to call:
 						movePiece={this.movePiece.bind(this)} />
 				))}

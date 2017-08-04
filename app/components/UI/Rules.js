@@ -24,7 +24,7 @@ class Rules extends React.Component {
 					<li>You are the only player.</li>
 					<li>You control <em>both black and white</em> pieces.</li>
 					<li>You have unlimited moves.</li>
-					<li>No pieces can get captured or leave the board - there is always exactly <em>one empty square</em>.</li>
+					<li>No pieces can get captured or leave the board - there is always exactly <em>one empty square</em> you must move into.</li>
 					<li>Movement follows the usual rules of chess. Only knights can jump.</li>
 					<li dangerouslySetInnerHTML={{ __html: thegoal }}></li>
 					<img src={picSrc} />
