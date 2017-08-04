@@ -167,7 +167,7 @@ class Board extends React.Component {
 
 	swapPieces(square1, square2) {
 		// Deep clone our board state:
-		var newBoard = _.cloneDeep(this.state.squares);
+		var newBoard = _.clone(this.state.squares);
 		var temp = square1.occupier;
 		console.log(square1.coords, 'gets', square2.occupier);	// ok
 		console.log(square2.coords, 'gets', square1.occupier);	// ok
@@ -228,7 +228,7 @@ class Board extends React.Component {
 
 	render() {
 		return (
-			<div id="board" className={this.props.boardClasses}>
+			<section id="board" className={this.props.boardClasses}>
 				{this.state.squares.map(sq => (
 					<Square
 						coords={sq.coords}
@@ -239,7 +239,7 @@ class Board extends React.Component {
 						// parent methods for children to call:
 						movePiece={this.movePiece.bind(this)} />
 				))}
-			</div>
+			</section>
 		);
 	}
 }

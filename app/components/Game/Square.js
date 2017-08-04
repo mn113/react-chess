@@ -4,9 +4,18 @@ var PropTypes = require('prop-types');
 var update = require('immutability-helper');
 
 
-// The Square should not really have state or any methods
-// Squares are fixed, stateless
 class Square extends React.Component {
+	constructor(props) {
+		super(props);
+
+		this.state = { queenVisited: false };
+	}
+
+	reset() {
+		// Reset every square when a new board is generated
+		this.setState({ queenVisited: false });
+	}
+
 	render() {
 		var id = 'x'+this.props.coords.x+'y'+this.props.coords.y;
 		var colour = '',
@@ -18,8 +27,15 @@ class Square extends React.Component {
 			type = this.props.occupier.slice(5);
 		}
 
+		// Highlight visited corners:
+		if ([{x:0,y:0},{x:3,y:0},{x:0,y:3},{x:3,y:3}].includes(this.props.coords)) {
+			if (this.props.occupier === 'whitequeen' && this.props.mode === 'queens') {
+				this.setState({ queenVisited: true });
+			}
+		}
+
 		return (
-			<div id={id}>
+			<div id={id} className={this.state.queenVisited && 'queenvisited'}>
 				{this.props.occupier ?
 					<Piece
 						coords={this.props.coords}
@@ -30,7 +46,7 @@ class Square extends React.Component {
 						mode={this.props.mode}
 						movePiece={this.props.movePiece}
 					/>
-					: '0'	// empty square possibility
+					: ''	// empty square possibility
 				}
 			</div>
 		);

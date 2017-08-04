@@ -19,8 +19,16 @@ module.exports = {
 					}
 				}]
 			},
-			{ test: /\.css$/, use: ['style-loader', 'css-loader'] },
-			{ test: /\.(png|jpg|gif|ico)$/, use: 'url-loader' }
+			{
+				test: /\.(jpe?g|png|gif|svg|ico)$/i,
+				loader: 'url-loader',
+				options: {
+				}
+			},
+			{
+				test: /\.css$/,
+				use: ['style-loader', 'css-loader']
+			}
 		]
 	},
 	plugins: [new HtmlWebpackPlugin({

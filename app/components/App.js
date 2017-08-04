@@ -2,6 +2,7 @@ var React = require('react');
 var Switcher = require('./UI/Switcher');
 var Stats = require('./UI/Stats');
 var Buttons = require('./UI/Buttons');
+var Rules = require('./UI/Rules');
 var Board = require('./Game/Board').default;
 var update = require('immutability-helper');
 
@@ -94,35 +95,41 @@ class App extends React.Component {
 
 		return (
 			<div>
-				<Switcher
-					mode={this.state.mode}
-					// parent methods for children to call:
-					changeMode={this.changeMode.bind(this)}
-				/>
-				<Stats
-					moveCount={this.state.moveCount}
-					winCount={this.state.winCount}
-					lossCount={this.state.lossCount}
-					gameStreak={this.state.gameStreak}
-					didWinMsg={this.state.didWinMsg}
-				/>
-				<Buttons
-				 	boardActive={this.state.boardActive}
-					// parent methods for children to call:
-					finishGame={this.finishGame.bind(this)}
-					newGame={this.newGame.bind(this)}
-				/>
-				<Board
-					mode={this.state.mode}
-					boardClasses={activeClass+' '+outcomeClass}
-					//shouldReload={this.state.reloadBoard}
-					// define a ref to child:
-					ref={(board) => { this.board = board; }}
-					// parent methods for children to call:
-					finishGame={this.finishGame.bind(this)}
-					//turnOffReloadTrigger={this.turnOffReloadTrigger.bind(this)}
-					incrementMoveCount={this.incrementMoveCount.bind(this)}
-				/>
+				<header>
+					<Switcher
+						mode={this.state.mode}
+						// parent methods for children to call:
+						changeMode={this.changeMode.bind(this)}
+					/>
+					<Stats
+						moveCount={this.state.moveCount}
+						winCount={this.state.winCount}
+						lossCount={this.state.lossCount}
+						gameStreak={this.state.gameStreak}
+						didWinMsg={this.state.didWinMsg}
+					/>
+					<Buttons
+					 	boardActive={this.state.boardActive}
+						// parent methods for children to call:
+						finishGame={this.finishGame.bind(this)}
+						newGame={this.newGame.bind(this)}
+					/>
+				</header>
+				<main>
+					<section className="padding">&nbsp;</section>
+					<Board
+						mode={this.state.mode}
+						boardClasses={activeClass+' '+outcomeClass}
+						//shouldReload={this.state.reloadBoard}
+						// define a ref to child:
+						ref={(board) => { this.board = board; }}
+						// parent methods for children to call:
+						finishGame={this.finishGame.bind(this)}
+						//turnOffReloadTrigger={this.turnOffReloadTrigger.bind(this)}
+						incrementMoveCount={this.incrementMoveCount.bind(this)}
+					/>
+					<Rules mode={this.state.mode} />
+				</main>
 			</div>
 		);
 	}
