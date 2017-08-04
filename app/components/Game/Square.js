@@ -31,7 +31,7 @@ class Square extends React.Component {
 
 		// If new board started, reset corners:
 		if (nextProps.moveCount === 0) {
-			console.log(nextProps);
+			//console.log(nextProps);
 			this.resetVisits();
 		}
 
@@ -40,7 +40,7 @@ class Square extends React.Component {
 	resetVisits() {
 		// Reset every square when a new board is generated
 		this.setState({ queenVisited: false });
-		console.log("Just reset visited corners");
+		//console.log("Just reset visited corners");
 	}
 
 	render() {

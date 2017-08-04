@@ -80,6 +80,7 @@ class App extends React.Component {
 		this.setState({
 			boardActive: true,
 			didWinMsg: false,
+			moveCount: 0
 		});
 		this.board.componentDidMount();
 	}
