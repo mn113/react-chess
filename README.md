@@ -9,7 +9,7 @@ A couple of single-player chess minigames, programmed as a web app in React.js.
 
 ## Where can I play it?
 
-Right here: https://mn113.github.com/react-chess
+Right here: https://mn113.github.com/react-chess/dist/
 
 ## How does the game work?
 
