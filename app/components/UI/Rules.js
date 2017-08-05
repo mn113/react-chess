@@ -1,6 +1,4 @@
 var React = require('react');
-//import hippoImg from '/hippowin.png';
-//import queensImg from '/queens.png';
 
 class Rules extends React.Component {
 	render() {

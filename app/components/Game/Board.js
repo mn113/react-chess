@@ -1,7 +1,8 @@
 var React = require('react');
 var Square = require('./Square');
 var PropTypes = require('prop-types');
-var _ = require('lodash');
+//var _ = require('lodash/core');
+var _ = window._;	// lodash pre-loaded from CDN
 var update = require('immutability-helper');
 
 const allPieces = [
